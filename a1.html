@@ -1,0 +1,57 @@
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Boost 1</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<form class="search-form">
+<input type="text" class="search" id="search"placeholder="City or State">
+<ul class="suggestions" id="showdata">
+<li >Filter for a city</li>
+<li>or a state</li>
+</ul>
+</form>
+<script type="text/javascript">
+          const url = 'https://gist.githubusercontent.com/tdreyno/4278655/raw/7b0762c09b519f40397e4c3e100b097d861f5588/airports.json';
+          const cities_array=[];
+          fetch(url)
+          .then((resp) => resp.json()) 
+          .then(data => cities_array.push(...data))
+      
+          function find_words(w_to_f, cities_array){
+          return cities_array.filter(loc => {
+          const flyt = new RegExp(w_to_f, 'gi');
+          return loc.city.match(flyt)
+          });
+          }
+     function showMatch()
+     {
+        const find_w=find_words(this.value, cities_array);
+        const showHtml = find_w.map(loc =>{
+        const flyt2 = new RegExp(this.value,'gi');
+              var city_name;
+              if(loc.city!=null) 
+              {
+               city_name = loc.city.replace(flyt2,`<span class="hl">${this.value}</span>`);
+              }
+              var state_name;        
+              if(loc.state!=null)
+              {
+               state_name = loc.state.replace(flyt2,`<span class="hl">${this.value}</span>`);
+              }
+        return `<li> 
+                <span class="name">${city_name}, ${state_name}</span>
+                <span class="population">${loc.woeid}</span>
+                </li>`;
+              }).join('');
+              showDate.innerHTML=showHtml;
+              }
+     const inputData=document.getElementById('search');
+     const showDate=document.getElementById('showdata');
+      
+     inputData.addEventListener('change',showMatch);
+     inputData.addEventListener('keyup',showMatch);
+</script>
+</body>
+</html>
